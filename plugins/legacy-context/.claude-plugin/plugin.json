@@ -1,0 +1,20 @@
+{
+  "name": "legacy-context",
+  "description": "Wide Scan for legacy repos: builds context/ with a territory map, dependency graph, contributor map and a decision-grade repo-map.md",
+  "version": "1.0.0",
+  "author": {
+    "name": "Mateusz"
+  },
+  "keywords": [
+    "legacy",
+    "context-engineering",
+    "repo-map",
+    "dependency-graph",
+    "git-history",
+    "onboarding",
+    "agents-md"
+  ],
+  "homepage": "https://github.com/matwiatrzyk/wide-scan",
+  "repository": "https://github.com/matwiatrzyk/wide-scan",
+  "license": "MIT"
+}

@@ -1,0 +1,49 @@
+{
+  "name": "@matwiatrzyk/wide-scan",
+  "version": "1.0.0",
+  "description": "Skills for entering large and legacy repositories: from an empty context/ to a decision-grade project map. Installs into Claude Code, Cursor and Codex.",
+  "keywords": [
+    "agent-skills",
+    "legacy",
+    "context-engineering",
+    "repo-map",
+    "dependency-graph",
+    "onboarding",
+    "claude-code",
+    "cursor",
+    "codex"
+  ],
+  "homepage": "https://github.com/matwiatrzyk/wide-scan",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matwiatrzyk/wide-scan.git"
+  },
+  "bugs": {
+    "url": "https://github.com/matwiatrzyk/wide-scan/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Mateusz",
+    "url": "https://github.com/matwiatrzyk"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "plugins/",
+    "scripts/install.mjs",
+    "scripts/uninstall.mjs",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/install.mjs",
+    "install:artifacts": "node scripts/install.mjs",
+    "uninstall:artifacts": "node scripts/uninstall.mjs",
+    "check": "bash scripts/check-version.sh"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  }
+}
