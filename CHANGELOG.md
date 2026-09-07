@@ -13,6 +13,13 @@ needs its section here before `scripts/release.sh` will let it through.
 
 -
 
+## [1.0.1] - 2026-09-07
+
+### Fixed
+
+- `check-version.sh` used `readarray`, which needs bash 4. macOS ships
+  bash 3.2, so validation — and therefore `release.sh` — failed there.
+
 ## [1.0.0] - 2026-09-07
 
 First release. Six skills for entering an unfamiliar repository, distributed
@@ -37,5 +44,6 @@ through two channels from one source of truth.
   `.wide-scan.json`, leaving anything it did not create alone.
 - Claude Code marketplace manifest, so the same tag serves both channels.
 
-[Unreleased]: https://github.com/matwiatrzyk/wide-scan/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/matwiatrzyk/wide-scan/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/matwiatrzyk/wide-scan/releases/tag/v1.0.1
 [1.0.0]: https://github.com/matwiatrzyk/wide-scan/releases/tag/v1.0.0
