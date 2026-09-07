@@ -1,0 +1,72 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: "@matwiatrzyk"
+
+      - name: Derive version from tag
+        id: v
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate manifests against the tag
+        run: bash scripts/check-version.sh "${{ steps.v.outputs.version }}"
+
+      # A commit message can lie about its intent; git diff cannot. If nothing
+      # that actually ships has moved since the last tag, this is not a release.
+      - name: Refuse an empty release
+        run: |
+          prev=$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)
+          if [ -z "$prev" ]; then
+            echo "First release - skipping the diff check."
+            exit 0
+          fi
+          changed=$(git diff --name-only "$prev" "${GITHUB_REF_NAME}" -- plugins/ scripts/)
+          if [ -z "$changed" ]; then
+            echo "ERROR: nothing under plugins/ or scripts/ changed since $prev." >&2
+            echo "A version bump on its own is not a release." >&2
+            exit 1
+          fi
+          echo "Changed since $prev:"
+          echo "$changed"
+
+      - name: Extract release notes from CHANGELOG
+        run: |
+          awk -v ver="${{ steps.v.outputs.version }}" '
+            $0 ~ "^## \\[" ver "\\]" { on=1; next }
+            on && /^## \[/ { exit }
+            on { print }
+          ' CHANGELOG.md > RELEASE_NOTES.md
+          test -s RELEASE_NOTES.md || { echo "No CHANGELOG entry for ${{ steps.v.outputs.version }}" >&2; exit 1; }
+          cat RELEASE_NOTES.md
+
+      - name: Publish to GitHub Packages
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "wide-scan ${GITHUB_REF_NAME}" \
+            --notes-file RELEASE_NOTES.md

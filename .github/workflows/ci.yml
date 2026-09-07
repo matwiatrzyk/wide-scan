@@ -1,0 +1,45 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate manifests and skills
+        run: bash scripts/check-version.sh
+
+      # Install the package into a throwaway project and assert the artifacts
+      # land where each tool reads them - and that uninstall takes them away.
+      - name: Smoke-test the installer
+        run: |
+          set -euo pipefail
+          npm pack --silent
+          tgz="$(ls -1 *.tgz | head -1)"
+          mkdir -p /tmp/consumer && cd /tmp/consumer
+          npm init -y >/dev/null
+          npm install --silent "$GITHUB_WORKSPACE/$tgz"
+
+          for skill in context-scaffold repo-territory repo-structure repo-contributors repo-map context-review; do
+            test -f ".agents/skills/$skill/SKILL.md" || { echo "missing .agents/skills/$skill"; exit 1; }
+            test -e ".claude/skills/$skill" || { echo "missing .claude/skills/$skill"; exit 1; }
+          done
+          test -f ".claude/commands/legacy-map.md"
+          test -f ".cursor/commands/legacy-map.md"
+          test -x ".agents/skills/repo-territory/scripts/git-scan.sh"
+          test -f ".wide-scan.json"
+          echo "install: ok"
+
+          node node_modules/@matwiatrzyk/wide-scan/scripts/uninstall.mjs
+          test ! -e ".agents/skills" || { echo "uninstall left .agents behind"; exit 1; }
+          test ! -e ".claude/skills" || { echo "uninstall left .claude/skills behind"; exit 1; }
+          test ! -f ".wide-scan.json" || { echo "manifest survived"; exit 1; }
+          echo "uninstall: ok"

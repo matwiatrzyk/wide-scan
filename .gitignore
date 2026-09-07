@@ -1,0 +1,9 @@
+.DS_Store
+Thumbs.db
+*.swp
+node_modules/
+*.tgz
+RELEASE_NOTES.md
+
+# written by scripts/install.mjs in consuming projects, never here
+.wide-scan.json

@@ -1,0 +1,33 @@
+{
+  "name": "wide-scan",
+  "owner": {
+    "name": "Mateusz",
+    "url": "https://github.com/matwiatrzyk"
+  },
+  "metadata": {
+    "description": "Skills for entering large and legacy repositories: from an empty context/ to a decision-grade project map.",
+    "version": "1.0.0",
+    "repository": "https://github.com/matwiatrzyk/wide-scan"
+  },
+  "plugins": [
+    {
+      "name": "legacy-context",
+      "source": "./plugins/legacy-context",
+      "description": "Wide Scan for legacy repos: territory (git history), structure (dependency graph), contributors, synthesized into context/map/repo-map.md. Plus a context/ scaffold and an AGENTS.md audit.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Mateusz"
+      },
+      "category": "development",
+      "keywords": [
+        "legacy",
+        "context-engineering",
+        "repo-map",
+        "dependency-graph",
+        "onboarding"
+      ],
+      "homepage": "https://github.com/matwiatrzyk/wide-scan",
+      "license": "MIT"
+    }
+  ]
+}
