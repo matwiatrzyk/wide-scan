@@ -1,7 +1,7 @@
 {
   "name": "legacy-context",
   "description": "Wide Scan for legacy repos: builds context/ with a territory map, dependency graph, contributor map and a decision-grade repo-map.md",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Mateusz"
   },

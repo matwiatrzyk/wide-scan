@@ -1,6 +1,6 @@
 {
   "name": "@matwiatrzyk/wide-scan",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Skills for entering large and legacy repositories: from an empty context/ to a decision-grade project map. Installs into Claude Code, Cursor and Codex.",
   "keywords": [
     "agent-skills",
