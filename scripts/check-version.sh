@@ -20,21 +20,32 @@ print(pl.get("version", "MISSING"))
 PY
 )"
 
-readarray -t V <<<"$VERSIONS"
-printf 'package.json                        : %s\n' "${V[0]}"
-printf 'marketplace.json metadata.version   : %s\n' "${V[1]}"
-printf 'marketplace.json plugins[0].version : %s\n' "${V[2]}"
-printf 'plugin.json      version            : %s\n' "${V[3]}"
+# Split on whitespace into positional parameters. `readarray` would be tidier but
+# it needs bash 4; macOS still ships bash 3.2, and this script has to run there.
+# Version strings never contain whitespace, so word splitting is safe here.
+# shellcheck disable=SC2086
+set -- $VERSIONS
 
-for v in "${V[@]}"; do
-  if [ "$v" != "${V[0]}" ]; then
+if [ "$#" -ne 4 ]; then
+  echo "ERROR: expected 4 version fields, got $#" >&2
+  exit 1
+fi
+
+printf 'package.json                        : %s\n' "$1"
+printf 'marketplace.json metadata.version   : %s\n' "$2"
+printf 'marketplace.json plugins[0].version : %s\n' "$3"
+printf 'plugin.json      version            : %s\n' "$4"
+
+VERSION="$1"
+for v in "$@"; do
+  if [ "$v" != "$VERSION" ]; then
     echo "ERROR: versions disagree" >&2
     exit 1
   fi
 done
 
-if [ -n "$EXPECTED" ] && [ "$EXPECTED" != "${V[0]}" ]; then
-  echo "ERROR: expected $EXPECTED but the manifests say ${V[0]}" >&2
+if [ -n "$EXPECTED" ] && [ "$EXPECTED" != "$VERSION" ]; then
+  echo "ERROR: expected $EXPECTED but the manifests say $VERSION" >&2
   exit 1
 fi
 
@@ -68,4 +79,4 @@ if ! grep -q '"plugins/"' package.json; then
   exit 1
 fi
 
-echo "check: ok (${V[0]}, $(ls -d plugins/legacy-context/skills/*/ | wc -l | tr -d ' ') skills)"
+echo "check: ok (${VERSION}, $(ls -d plugins/legacy-context/skills/*/ | wc -l | tr -d ' ') skills)"
